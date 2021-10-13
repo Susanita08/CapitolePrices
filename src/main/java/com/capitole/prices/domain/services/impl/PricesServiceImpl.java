@@ -47,7 +47,10 @@ public class PricesServiceImpl implements PricesServices {
     }
 
     public JsonOutputPrices getBadResponse() {
-        Response response = JsonOutputPrices.Response.builder().code(ApplicationMessage.UNEXPECTED.getCode()).message(ApplicationMessage.UNEXPECTED.getMessage()).strCode(ApplicationMessage.UNEXPECTED.getStrCode()).build();
+        Response response = JsonOutputPrices.Response.builder()
+                .code(ApplicationMessage.UNEXPECTED.getCode())
+                .message(ApplicationMessage.UNEXPECTED.getMessage())
+                .strCode(ApplicationMessage.UNEXPECTED.getStrCode()).build();
         return JsonOutputPrices.builder().response(response).build();
     }
 
@@ -60,8 +63,11 @@ public class PricesServiceImpl implements PricesServices {
         Timestamp timeDB= Optional.of(Timestamp.valueOf(dateFound)).orElseThrow(()-> new DateException(FORMAT_INVALIDATE));
         Price price= pricesRepository.findByProductIdAndBrandIdAndDateBetweenStartDateAndEndDate(timeDB, productId, brandId);
 
-        return ofNullable(price).map(p -> JsonOutputPrices.builder().productId(productId).brandId(brandId).dateToFound(timeDB.toLocalDateTime())
-                        .price(p).rateToApply(p.getPrice()).tax(selfConfiguration.getTax()).finalPrice(calculateFinalPrice(p.getPrice()))
+        return ofNullable(price).map(p -> JsonOutputPrices.builder().productId(productId)
+                        .brandId(brandId).dateToFound(timeDB.toLocalDateTime())
+                        .price(p).rateToApply(p.getPrice())
+                        .tax(selfConfiguration.getTax())
+                        .finalPrice(calculateFinalPrice(p.getPrice()))
                         .response(setResponsePrice(ApplicationMessage.SUCCESS, "")).build())
                 .orElse(JsonOutputPrices.builder().response(setResponsePrice(ApplicationMessage.UNEXPECTED, FAILED_QUERY)).build());
     }
@@ -71,7 +77,8 @@ public class PricesServiceImpl implements PricesServices {
         if(isNull(jsonOutputPrices) || isNull(jsonOutputPrices.getPrice())){
             return;
         }
-        jsonOutputPrices.getPrice().add(linkTo(methodOn(PricesController.class).foundPrice(brandId, productId, dateFound)).withSelfRel());
+        jsonOutputPrices.getPrice().add(linkTo(methodOn(PricesController.class)
+                .foundPrice(brandId, productId, dateFound)).withSelfRel());
     }
 
     private Response setResponsePrice(ApplicationMessage aplication, String description){
