@@ -42,12 +42,6 @@ public class PricesControllerIntegrationTest {
     private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 
-    /*-    Test 1: petición a las 10:00 del día 14 del producto 35455   para la brand 1 (ZARA)
--          Test 2: petición a las 16:00 del día 14 del producto 35455   para la brand 1 (ZARA)
--          Test 3: petición a las 21:00 del día 14 del producto 35455   para la brand 1 (ZARA)
--          Test 4: petición a las 10:00 del día 15 del producto 35455   para la brand 1 (ZARA)
--          Test 5: petición a las 21:00 del día 16 del producto 35455   para la brand 1 (ZARA)
-    * */
     public static Stream<Arguments> testCases() {
         return Stream.of(
                 Arguments.of(1L, 35455L, "2020-06-14-10.00.00", "2020-06-14 00:00:00.0", "2020-12-31 23:59:59.0", new BigDecimal("35.5")),
@@ -74,7 +68,6 @@ public class PricesControllerIntegrationTest {
                 .andExpect(jsonPath("$.rateToApply").value(price));
     }
 
-    // assertThrows(RuntimeException.class, ()->pricesController.foundPrice(brandId,productId, LocalDateFormatter.getDateToFind(dateString)));
     @Test
     void givenPriceThenInputErrorRestControllerAdvice() throws Exception {
         Long brandId=1L; Long productId=35455L; String dateString="XXXX";
