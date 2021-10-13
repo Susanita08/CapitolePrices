@@ -36,7 +36,8 @@ public class SelfConfiguration implements WebMvcConfigurer {
     public WebClient webClient() {
         HttpClient httpClient = HttpClient.create().option(ChannelOption.CONNECT_TIMEOUT_MILLIS, getInternalTimeout());
         return WebClient.builder()
-                .clientConnector(new ReactorClientHttpConnector(httpClient)).defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE).build();
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE).build();
     }
 
     @Override

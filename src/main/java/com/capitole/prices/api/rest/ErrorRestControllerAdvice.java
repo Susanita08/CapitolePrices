@@ -25,8 +25,10 @@ public class ErrorRestControllerAdvice {
         ex.printStackTrace(new PrintWriter(sw));
         logger.info("executing exception handler (REST): ");
         logger.error(sw.toString());
-        return JsonOutputPrices.builder().response(Response.builder().code(ApplicationMessage.UNEXPECTED.getCode())
-                .message(ApplicationMessage.UNEXPECTED.getMessage()).description(ex.getMessage()).build()).build();
+        return JsonOutputPrices.builder().response(Response.builder()
+                .code(ApplicationMessage.UNEXPECTED.getCode())
+                .message(ApplicationMessage.UNEXPECTED.getMessage())
+                .description(ex.getMessage()).build()).build();
 
     }
 

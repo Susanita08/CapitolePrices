@@ -54,7 +54,8 @@ public class PricesController {
         log.info("Find price valid.");
         JsonOutputPrices jsonOutputPrices=pricesServices.searchPrice(dateFound, brandId, productId);
         pricesServices.setLink(jsonOutputPrices, brandId, productId, dateFound);
-        return ResponseEntity.status(getHttpStatusFromResponseCode(jsonOutputPrices.getResponse().getStrCode())).body(jsonOutputPrices);
+        return ResponseEntity.status(getHttpStatusFromResponseCode(jsonOutputPrices.getResponse().getStrCode())).
+                body(jsonOutputPrices);
     }
 
     private HttpStatus getHttpStatusFromResponseCode(String responseCode){
