@@ -1,5 +1,6 @@
-package com.capitole.prices.enums;
+package com.capitole.prices.domain.enums;
 
+import com.capitole.prices.domain.enums.ApplicationMessage;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 

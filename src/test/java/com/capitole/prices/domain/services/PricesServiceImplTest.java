@@ -1,9 +1,9 @@
-package com.capitole.prices.domain.services.impl;
+package com.capitole.prices.domain.services;
 
-import com.capitole.prices.config.SelfConfiguration;
-import com.capitole.prices.domain.repository.PricesRepository;
-import com.capitole.prices.enums.ApplicationMessage;
-import com.capitole.prices.output.objects.JsonOutputPrices;
+import com.capitole.prices.domain.services.PricesServiceImpl;
+import com.capitole.prices.domain.dto.Price;
+import com.capitole.prices.infrastructure.repository.PricesRepository;
+import com.capitole.prices.api.response.JsonOutputPrices;
 import com.capitole.prices.services.test.impl.JsonOutputPricesMother;
 import com.capitole.prices.utils.LocalDateFormatter;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,9 +24,6 @@ import static org.mockito.Mockito.verify;
 class PricesServiceImplTest {
 
     @Mock
-    private SelfConfiguration selfConfiguration;
-
-    @Mock
     private PricesRepository pricesRepository;
 
     public static Stream<Arguments> testCases() {
@@ -41,8 +38,14 @@ class PricesServiceImplTest {
 
     public static Stream<Arguments> testCasesWithError() {
         return Stream.of(
-                Arguments.of(1L, null, "2020-06-14-10.00.00"),Arguments.of(1L, 35455L, null), Arguments.of(null, 35455L, "2020-06-14-21.00.00"),
-                Arguments.of(0L, 35455L, "2020-06-16-21.00.00"), Arguments.of(null, null, null)
+                Arguments.of(1L, null, "2020-06-14-10.00.00"),Arguments.of(null, 35455L, "2020-06-14-21.00.00"),
+                Arguments.of(0L, 35455L, "2020-06-16-21.00.00")
+        );
+    }
+
+    public static Stream<Arguments> testCasesWithDateNull() {
+        return Stream.of(
+                Arguments.of(1L, 35455L, null), Arguments.of(null, null, null)
         );
     }
 
@@ -50,45 +53,54 @@ class PricesServiceImplTest {
     @MethodSource("testCases")
     void givenPriceWithoutErrors(Long brandId, Long productId, String dateString, String startDate, String endDate, BigDecimal price) throws Exception {
         pricesRepository=mock(PricesRepository.class);
-        selfConfiguration=mock(SelfConfiguration.class);
         JsonOutputPricesMother jsonOutputPricesMother = new JsonOutputPricesMother();
         JsonOutputPrices jsonOutputPricesExpected = jsonOutputPricesMother.getJsonOutputPrices(productId,brandId,dateString, startDate, endDate, price);
         LocalDateTime localDateTime = jsonOutputPricesExpected.getDateToFound();
         when(pricesRepository.findByProductIdAndBrandIdAndDateBetweenStartDateAndEndDate(any(), any(), any())).thenReturn(jsonOutputPricesExpected.getPrice());
-        when(selfConfiguration.getTax()).thenReturn(0.21);
 
-        PricesServiceImpl pricesService = new PricesServiceImpl(pricesRepository, selfConfiguration);
+        PricesServiceImpl pricesService = new PricesServiceImpl(pricesRepository);
 
-        final JsonOutputPrices result = pricesService.searchPrice(localDateTime,productId, brandId);
+        final Price result = pricesService.searchPrice(localDateTime,productId, brandId);
 
         verify(pricesRepository).findByProductIdAndBrandIdAndDateBetweenStartDateAndEndDate(any(), any(), any());
 
-        assertEquals(jsonOutputPricesExpected.getPrice(), result.getPrice());
-        assertEquals(jsonOutputPricesExpected.getFinalPrice(), result.getFinalPrice());
-        assertEquals(jsonOutputPricesExpected.getResponse().getMessage(), result.getResponse().getMessage());
+        assertEquals(jsonOutputPricesExpected.getPrice(), result);
     }
 
     @ParameterizedTest
     @MethodSource("testCasesWithError")
     void givenPriceWithErrors(Long brandId, Long productId, String dateString) {
         pricesRepository=mock(PricesRepository.class);
-        selfConfiguration=mock(SelfConfiguration.class);
         LocalDateTime dateTime=null;
+        PricesServiceImpl pricesService = new PricesServiceImpl(pricesRepository);
+
 
         if(nonNull(dateString)){
-            //"yyyy-MM-dd-HH.mm.ss" format solicited in the test capitole
+            dateTime= LocalDateFormatter.getDateToFind(dateString);
+        }else {
+            LocalDateTime finalDateTime = dateTime;
+            assertThrows(RuntimeException.class, () -> pricesService.searchPrice(finalDateTime, productId, brandId));
+        }
+
+        LocalDateTime finalDate = dateTime;
+        final Price result = pricesService.searchPrice(finalDate,productId, brandId);
+
+        assertNull(result);
+    }
+
+    @ParameterizedTest
+    @MethodSource("testCasesWithDateNull")
+    void givenPriceWithErrorsForDateNull(Long brandId, Long productId, String dateString) {
+        pricesRepository=mock(PricesRepository.class);
+        LocalDateTime dateTime=null;
+        PricesServiceImpl pricesService = new PricesServiceImpl(pricesRepository);
+
+
+        if(nonNull(dateString)){
             dateTime= LocalDateFormatter.getDateToFind(dateString);
         }
 
-        when(selfConfiguration.getTax()).thenReturn(0.21);
-
-        PricesServiceImpl pricesService = new PricesServiceImpl(pricesRepository, selfConfiguration);
-
-        final JsonOutputPrices result = pricesService.searchPrice(dateTime,productId, brandId);
-
-        assertEquals(ApplicationMessage.UNEXPECTED.getCode(), result.getResponse().getCode());
-        assertEquals(ApplicationMessage.UNEXPECTED.getMessage(), result.getResponse().getMessage());
-        assertEquals(ApplicationMessage.UNEXPECTED.getStrCode(), result.getResponse().getStrCode());
-
-    }
+        LocalDateTime finalDateTime = dateTime;
+        assertThrows(RuntimeException.class, () -> pricesService.searchPrice(finalDateTime, productId, brandId));
+   }
 }

@@ -1,6 +1,6 @@
 package com.capitole.prices.validators;
 
-import com.capitole.prices.validators.anotation.ConsistentDateParameters;
+import com.capitole.prices.validators.anotations.ConsistentDateParameters;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -16,11 +16,11 @@ public class ConsistentDateParameterValidator implements ConstraintValidator<Con
 
     @Override
     public boolean isValid(Object[] value, ConstraintValidatorContext context) {
-        if (value[2] == null) {
+        if (value[0] == null) {
             return false;
         }
 
-        if (!(value[2] instanceof LocalDateTime)) {
+        if (!(value[0] instanceof LocalDateTime)) {
             throw new IllegalArgumentException(ILEGAL_PARAMETER_DATE_ERROR);
         }else return true;
 

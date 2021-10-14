@@ -16,6 +16,8 @@ The purpose of these documents is to provide an overview of the post system to a
 
 ## Overview
 
+SpringHateos is used to decouple the entity from the model through the RepresentationModel implementation, this avoids repeating code for the models and converters, although this is still controversial for some developers, it is very useful when you want to implement the search links by id al particular model consulted.
+
 A microservice was built in SpringBoot that has a query rest end point that accepts as input parameters: the product identifier, the brand identifier and the application date.
 
 With the following format of example.
@@ -50,8 +52,6 @@ It returns as output a JsonOutputPrice that mainly has: the product identifier, 
         "strCode": "00",
         "description": ""
     }                                                       
-
-Spring Hateos was used to refer to the same endpoint, however, this would be really useful if there was another endpoint that found the Price object by id, where in this link, only the link of the object would be referenced and it would facilitate the search for any client that you will need to find this data by id.
 
 Swagger2 was used to generate documentation for the important public endpoints of the controller.
 

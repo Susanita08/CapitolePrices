@@ -1,7 +1,8 @@
-package com.capitole.prices.api.rest;
+package com.capitole.prices.api;
 
-import com.capitole.prices.domain.services.PricesServices;
-import com.capitole.prices.output.objects.JsonOutputPrices;
+import com.capitole.prices.api.rest.PricesController;
+import com.capitole.prices.api.response.JsonOutputPrices;
+import com.capitole.prices.domain.ports.primary.AdapterPriceToJsonOutputService;
 import com.capitole.prices.services.test.impl.JsonOutputPricesMother;
 import com.capitole.prices.utils.LocalDateFormatter;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,11 +29,11 @@ class PricesControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Mock
-    private PricesServices pricesServices;
+    private AdapterPriceToJsonOutputService adapterPriceToJsonOutputService;
 
     @Before
     public void setUpEach(){
-       pricesServices=mock(PricesServices.class);
+        adapterPriceToJsonOutputService=mock(AdapterPriceToJsonOutputService.class);
     }
 
     public static Stream<Arguments> testCases() {
@@ -51,13 +52,13 @@ class PricesControllerTest {
         JsonOutputPricesMother jsonOutputPricesMother= new JsonOutputPricesMother();
         JsonOutputPrices jsonOutputPricesExpected = jsonOutputPricesMother.getJsonOutputPrices(productId, brandId,dateString, startDate, endDate, price);
 
-        when(pricesServices.searchPrice(any(),any(), any())).thenReturn(jsonOutputPricesExpected);
+        when(adapterPriceToJsonOutputService.adapterOutputPrices(any(),any(), any())).thenReturn(jsonOutputPricesExpected);
 
-        PricesController pricesController = new PricesController(pricesServices);
+        PricesController pricesController = new PricesController(adapterPriceToJsonOutputService);
 
-        ResponseEntity<JsonOutputPrices> jsonOutput = pricesController.foundPrice(brandId,productId, LocalDateFormatter.getDateToFind(dateString));
+        ResponseEntity<JsonOutputPrices> jsonOutput = pricesController.foundPrice(LocalDateFormatter.getDateToFind(dateString), productId, brandId);
 
-        verify(pricesServices).searchPrice(any(), any(), any());
+        verify(adapterPriceToJsonOutputService).adapterOutputPrices(any(), any(), any());
 
         assertEquals(HttpStatus.OK, jsonOutput.getStatusCode());
 

@@ -4,9 +4,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 
-import com.capitole.prices.enums.ApplicationMessage;
-import com.capitole.prices.output.objects.JsonOutputPrices;
-import com.capitole.prices.output.objects.JsonOutputPrices.Response;
+import com.capitole.prices.domain.enums.ApplicationMessage;
+import com.capitole.prices.api.response.JsonOutputPrices;
+import com.capitole.prices.api.response.JsonOutputPrices.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

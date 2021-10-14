@@ -1,4 +1,4 @@
-package com.capitole.prices.config;
+package com.capitole.prices.infrastructure.config;
 
 import io.netty.channel.ChannelOption;
 import lombok.Data;

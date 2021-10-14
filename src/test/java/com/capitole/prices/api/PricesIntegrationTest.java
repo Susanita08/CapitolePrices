@@ -1,16 +1,11 @@
-package com.capitole.prices.api.rest;
+package com.capitole.prices.api;
 
 import com.capitole.prices.PricesMessageApplication;
-import com.capitole.prices.domain.dto.Price;
-import com.capitole.prices.enums.ApplicationMessage;
-import com.capitole.prices.output.objects.JsonOutputPrices;
+import com.capitole.prices.api.response.JsonOutputPrices;
 import com.capitole.prices.services.test.impl.JsonOutputPricesMother;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.json.JSONObject;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -34,10 +29,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = PricesMessageApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class PricesControllerIntegrationTest {
+public class PricesIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    private static final String PARTIAL_PATH="/prices/api/v1/findPrice/";
 
     private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -59,7 +56,7 @@ public class PricesControllerIntegrationTest {
         JsonOutputPrices jsonOutputPrices = jsonOutputPricesMother.getJsonOutputPrices(productId,brandId,dateString, startDate, endDate, price);
         this.mockMvc
                 .perform(
-                        get("/prices/api/v1/findPrice/"+productId+"/"+brandId+"?dateFound="+ dateString)
+                        get(PARTIAL_PATH+productId+"/"+brandId+"?dateFound="+ dateString)
                                 .contentType(APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(jsonOutputPrices)))
                 .andDo(print())
@@ -75,7 +72,7 @@ public class PricesControllerIntegrationTest {
 
         this.mockMvc
                 .perform(
-                        get("/prices/api/v1/findPrice/"+productId+"/"+brandId+"?dateFound="+ dateString)
+                        get(PARTIAL_PATH+productId+"/"+brandId+"?dateFound="+ dateString)
                                 .contentType(APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(jsonOutputPrices)))
                 .andDo(print())

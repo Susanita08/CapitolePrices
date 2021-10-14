@@ -1,15 +1,16 @@
 package com.capitole.prices.api.rest;
 
-import com.capitole.prices.domain.services.PricesServices;
-import com.capitole.prices.enums.ApplicationMessage;
-import com.capitole.prices.output.objects.JsonOutputPrices;
-import com.capitole.prices.validators.anotation.ConsistentDateParameters;
+import com.capitole.prices.domain.enums.ApplicationMessage;
+import com.capitole.prices.api.response.JsonOutputPrices;
+import com.capitole.prices.domain.ports.primary.AdapterPriceToJsonOutputService;
+import com.capitole.prices.validators.anotations.ConsistentDateParameters;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,22 +39,22 @@ public class PricesController {
         STATUS_MAP.put(ApplicationMessage.SUCCESS.getStrCode(), HttpStatus.OK);
     }
 
-    private final PricesServices pricesServices;
+    @Autowired
+    private final AdapterPriceToJsonOutputService adapterPriceToJsonOutputService;
 
-    public PricesController(PricesServices pricesServices) {
-        this.pricesServices = pricesServices;
+    public PricesController(AdapterPriceToJsonOutputService adapterPriceToJsonOutputService) {
+        this.adapterPriceToJsonOutputService=adapterPriceToJsonOutputService;
     }
 
     @ApiOperation(value = "Find price by date valid, productId and brandId in the system")
     @ApiResponses( {@ApiResponse(code = 200, message = "Find price valid in the system")})
-    @GetMapping(path = PATH_SEPARATOR + FIND_PRICE + PATH_SEPARATOR + BRAND_ID + PATH_SEPARATOR + PRODUCT_ID,
+    @GetMapping(path = PATH_SEPARATOR + FIND_PRICE + PATH_SEPARATOR + PRODUCT_ID + PATH_SEPARATOR + BRAND_ID ,
             consumes=MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     @ConsistentDateParameters
-    public ResponseEntity<JsonOutputPrices> foundPrice(@PathVariable Long brandId, @PathVariable Long productId,
-                                                       @Valid @RequestParam(name = "dateFound", required = true) LocalDateTime dateFound) {
+    public ResponseEntity<JsonOutputPrices> foundPrice(@Valid @RequestParam(name = "dateFound", required = true) LocalDateTime dateFound,
+                                                       @PathVariable Long productId, @PathVariable Long brandId) {
         log.info("Find price valid.");
-        JsonOutputPrices jsonOutputPrices=pricesServices.searchPrice(dateFound, brandId, productId);
-        pricesServices.setLink(jsonOutputPrices, brandId, productId, dateFound);
+        JsonOutputPrices jsonOutputPrices =adapterPriceToJsonOutputService.adapterOutputPrices(dateFound, productId, brandId);
         return ResponseEntity.status(getHttpStatusFromResponseCode(jsonOutputPrices.getResponse().getStrCode())).
                 body(jsonOutputPrices);
     }
