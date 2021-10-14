@@ -1,6 +1,5 @@
 package com.capitole.prices.domain.services;
 
-import com.capitole.prices.domain.services.PricesServiceImpl;
 import com.capitole.prices.domain.dto.Price;
 import com.capitole.prices.infrastructure.repository.PricesRepository;
 import com.capitole.prices.api.response.JsonOutputPrices;
@@ -13,6 +12,7 @@ import org.mockito.Mock;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static java.util.Objects.nonNull;
@@ -56,13 +56,13 @@ class PricesServiceImplTest {
         JsonOutputPricesMother jsonOutputPricesMother = new JsonOutputPricesMother();
         JsonOutputPrices jsonOutputPricesExpected = jsonOutputPricesMother.getJsonOutputPrices(productId,brandId,dateString, startDate, endDate, price);
         LocalDateTime localDateTime = jsonOutputPricesExpected.getDateToFound();
-        when(pricesRepository.findByProductIdAndBrandIdAndDateBetweenStartDateAndEndDate(any(), any(), any())).thenReturn(jsonOutputPricesExpected.getPrice());
+        when(pricesRepository.findTopByProductIdAndBrandIdAndDateBetweenStartDateAndEndDate(any(), any(), any())).thenReturn(List.of(jsonOutputPricesExpected.getPrice()));
 
         PricesServiceImpl pricesService = new PricesServiceImpl(pricesRepository);
 
         final Price result = pricesService.searchPrice(localDateTime,productId, brandId);
 
-        verify(pricesRepository).findByProductIdAndBrandIdAndDateBetweenStartDateAndEndDate(any(), any(), any());
+        verify(pricesRepository).findTopByProductIdAndBrandIdAndDateBetweenStartDateAndEndDate(any(), any(), any());
 
         assertEquals(jsonOutputPricesExpected.getPrice(), result);
     }
@@ -73,13 +73,13 @@ class PricesServiceImplTest {
         pricesRepository=mock(PricesRepository.class);
         LocalDateTime dateTime=null;
         PricesServiceImpl pricesService = new PricesServiceImpl(pricesRepository);
+        when(pricesRepository.findTopByProductIdAndBrandIdAndDateBetweenStartDateAndEndDate(any(), any(), any())).thenReturn(null);
 
 
         if(nonNull(dateString)){
             dateTime= LocalDateFormatter.getDateToFind(dateString);
         }else {
-            LocalDateTime finalDateTime = dateTime;
-            assertThrows(RuntimeException.class, () -> pricesService.searchPrice(finalDateTime, productId, brandId));
+            assertThrows(RuntimeException.class, () -> pricesService.searchPrice(null, productId, brandId));
         }
 
         LocalDateTime finalDate = dateTime;
