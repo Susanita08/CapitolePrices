@@ -1,7 +1,6 @@
 package com.capitole.prices.domain.services;
 
 import com.capitole.prices.api.response.JsonOutputPrices;
-import com.capitole.prices.api.rest.PricesController;
 import com.capitole.prices.domain.dto.Price;
 import com.capitole.prices.domain.enums.ApplicationMessage;
 import com.capitole.prices.domain.ports.primary.AdapterPriceToJsonOutputService;
@@ -18,8 +17,6 @@ import static com.capitole.prices.utils.ConstantsUtils.FAILED_QUERY;
 import static com.capitole.prices.utils.ConstantsUtils.FORMAT_INVALIDATE;
 import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class AdapterPriceToJsonOutputImpl implements AdapterPriceToJsonOutputService {

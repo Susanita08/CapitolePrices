@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.capitole.prices.utils.ConstantsUtils.FORMAT_INVALIDATE;
+import static java.util.Optional.ofNullable;
 
 @Service
 public class PricesServiceImpl implements PricesServices {
@@ -30,6 +31,6 @@ public class PricesServiceImpl implements PricesServices {
     public Price searchPrice(LocalDateTime dateFound, Long productId, Long brandId) {
         log.info("Found price to apply in the date: "+dateFound+" ,with of productId: "+productId+" , of the brand: "+brandId);
         Timestamp timeDB= Optional.of(Timestamp.valueOf(dateFound)).orElseThrow(()-> new DateException(FORMAT_INVALIDATE));
-        return pricesRepository.findByProductIdAndBrandIdAndDateBetweenStartDateAndEndDate(timeDB, productId, brandId);
+        return ofNullable(pricesRepository.findTopByProductIdAndBrandIdAndDateBetweenStartDateAndEndDate(timeDB, productId, brandId)).map(prices -> prices.get(0)).orElse(null);
     }
 }

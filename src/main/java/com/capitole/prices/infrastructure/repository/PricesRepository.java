@@ -7,12 +7,11 @@ import org.springframework.data.repository.query.Param;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 
 public interface PricesRepository extends JpaRepository<Price, Serializable> {
 
-
-
-    @Query(value= "SELECT Top 1 * FROM Price WHERE ((:dateToFound BETWEEN start_date AND end_date) AND (PRODUCT_ID=:productId) AND (BRAND_ID=:brandId)) order by priority DESC", nativeQuery = true)
-    Price findByProductIdAndBrandIdAndDateBetweenStartDateAndEndDate(@Param("dateToFound") Timestamp dateToFound, @Param("productId") Long productId, @Param("brandId") Long brandId);
+    @Query(value= "SELECT p FROM Price p WHERE ((?1 BETWEEN p.startDate AND p.endDate) AND (p.productId=?2) AND (p.brandId=?3)) order by p.priority DESC")
+    List<Price> findTopByProductIdAndBrandIdAndDateBetweenStartDateAndEndDate(Timestamp dateToFound, Long productId, Long brandId);
 }
 
