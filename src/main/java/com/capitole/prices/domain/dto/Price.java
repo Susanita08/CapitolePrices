@@ -1,7 +1,7 @@
 package com.capitole.prices.domain.dto;
 
 
-import com.capitole.prices.validators.anotation.ConsistentDateParameters;
+import com.capitole.prices.validators.anotations.ConsistentDateParameters;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;

@@ -1,4 +1,4 @@
-package com.capitole.prices.validators.anotation;
+package com.capitole.prices.validators.anotations;
 
 import com.capitole.prices.validators.ConsistentDateParameterValidator;
 

@@ -6,7 +6,7 @@ public class ConstantsUtils {
 
     /*Message for declaration's exceptions*/
     public static final String END_DATE_LESS_THAT_START_DATE_ERROR="The end date cannot be less than the start date.";
-    public static final String FORMAT_INVALIDATE="Parameters of date invalidate.";
+    public static final String FORMAT_INVALIDATE="Invalidate parameters.";
     public static final String ILEGAL_PARAMETER_DATE_ERROR="Illegal method signature.";
     public static final String FAILED_QUERY="Failed price query.";
 

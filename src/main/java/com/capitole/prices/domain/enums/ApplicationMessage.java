@@ -1,4 +1,4 @@
-package com.capitole.prices.enums;
+package com.capitole.prices.domain.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

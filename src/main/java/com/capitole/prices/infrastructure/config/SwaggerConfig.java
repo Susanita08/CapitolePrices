@@ -1,4 +1,4 @@
-package com.capitole.prices.config;
+package com.capitole.prices.infrastructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

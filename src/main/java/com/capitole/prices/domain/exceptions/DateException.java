@@ -1,4 +1,4 @@
-package com.capitole.prices.exceptions;
+package com.capitole.prices.domain.exceptions;
 
 public class DateException extends RuntimeException {
 
